@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Historique des Progressions{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Suivi des Progressions (Mémorisation)</h2>
+    <a href="{{ url_for('progressions.creer') }}" class="btn btn-primary">+ Enregistrer une Évaluation</a>
+</div>
+
+<!-- Filtrage rapide par Talibé -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('progressions.lister') }}" class="row g-3">
+            <div class="col-md-9">
+                <input type="text" name="talibe" value="{{ request.args.get('talibe', '') }}" class="form-control" placeholder="Rechercher par matricule exact du talibé...">
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-secondary">Filtrer par Talibé</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tableau des Évaluations -->
+<div class="table-responsive bg-white rounded shadow-sm p-3">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Date d'évaluation</th>
+                <th>Talibé</th>
+                <th>Sourate</th>
+                <th class="text-center">Versets mémorisés</th>
+                <th>Observations</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for progression in progressions %}
+            <tr>
+                <td><strong>{{ progression.date_evaluation.strftime('%d/%m/%Y') }}</strong></td>
+                <td>
+                    {% if progression.talibe %}
+                        {{ progression.talibe.prenom }} {{ progression.talibe.nom }}
+                        <small class="text-muted">({{ progression.talibe_matricule }})</small>
+                    {% else %}
+                        <span class="text-danger">Talibé inconnu</span>
+                    {% endif %}
+                </td>
+                <td><span class="badge bg-success">Sourate {{ progression.sourate }}</span></td>
+                <td class="text-center">
+                    <span class="fw-bold text-primary">{{ progression.nombre_versets }}</span> verset(s)
+                </td>
+                <td>
+                    {% if progression.observations %}
+                        <span class="text-muted italic">{{ progression.observations }}</span>
+                    {% else %}
+                        <span class="text-muted small">-</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <!-- Formulaire de suppression -->
+                    <form action="{{ url_for('progressions.supprimer', id=progression.id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette évaluation ?');" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">Aucune évaluation de progression enregistrée.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Liste des Classes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Gestion des Classes</h2>
+    <a href="{{ url_for('classes.creer') }}" class="btn btn-primary">+ Ajouter une Classe</a>
+</div>
+
+<!-- Barre de recherche -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('classes.lister') }}" class="row g-3">
+            <div class="col-md-9">
+                <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Rechercher par code ou libellé de classe...">
+            </div>
+            <div class="col-md-3 d-grid">
+                <button type="submit" class="btn btn-secondary">Rechercher</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tableau des Classes -->
+<div class="table-responsive bg-white rounded shadow-sm p-3">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Code</th>
+                <th>Libellé</th>
+                <th>Niveau</th>
+                <th>Maître Responsable</th>
+                <th class="text-center">Nombre de Talibés</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for classe in classes %}
+            <tr>
+                <td><strong>{{ classe.code }}</strong></td>
+                <td>{{ classe.libelle }}</td>
+                <td><span class="badge bg-secondary">{{ classe.niveau }}</span></td>
+                <td>
+                    {% if classe.maitre %}
+                        M. {{ classe.maitre.prenom }} {{ classe.maitre.nom }}
+                    {% else %}
+                        <span class="text-danger">Aucun maître assigné</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <span class="badge bg-primary rounded-pill">{{ classe.talibes|length }}</span>
+                </td>
+                <td class="text-center">
+                    <!-- Formulaire de suppression sécurisé par POST -->
+                    <form action="{{ url_for('classes.supprimer', code=classe.code) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette classe ?');" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">Aucune classe enregistrée.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

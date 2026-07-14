@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvelle Évaluation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Enregistrer une évaluation de mémorisation</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.talibe_matricule.label(class="form-label") }}
+                        {{ form.talibe_matricule(class="form-select") }}
+                        {% if form.talibe_matricule.errors %}
+                            <div class="text-danger small">{% for error in form.talibe_matricule.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            {{ form.sourate.label(class="form-label") }}
+                            {{ form.sourate(class="form-control", placeholder="Ex: Al-Baqara") }}
+                            {% if form.sourate.errors %}
+                                <div class="text-danger small">{% for error in form.sourate.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.nombre_versets.label(class="form-label") }}
+                            {{ form.nombre_versets(class="form-control", type="number", min="0", placeholder="Ex: 15") }}
+                            {% if form.nombre_versets.errors %}
+                                <div class="text-danger small">{% for error in form.nombre_versets.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.date_evaluation.label(class="form-label") }}
+                        {{ form.date_evaluation(class="form-control", type="date") }}
+                        {% if form.date_evaluation.errors %}
+                            <div class="text-danger small">{% for error in form.date_evaluation.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.observations.label(class="form-label") }}
+                        {{ form.observations(class="form-control", rows="3", placeholder="Remarques sur la prononciation, le tajwid...") }}
+                        {% if form.observations.errors %}
+                            <div class="text-danger small">{% for error in form.observations.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('progressions.lister') }}" class="btn btn-light">Annuler</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
