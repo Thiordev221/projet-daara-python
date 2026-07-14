@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvel Inscription{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Formulaire d'inscription Talibé</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.matricule.label(class="form-label") }}
+                            {{ form.matricule(class="form-control", placeholder="Ex: T-2026-001") }}
+                            {% if form.matricule.errors %}
+                                <div class="text-danger small">{% for error in form.matricule.errors %}{{ error }}{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.classe_code.label(class="form-label") }}
+                            {{ form.classe_code(class="form-select") }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.prenom.label(class="form-label") }}
+                            {{ form.prenom(class="form-control") }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.nom.label(class="form-label") }}
+                            {{ form.nom(class="form-control") }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.date_naissance.label(class="form-label") }}
+                            {{ form.date_naissance(class="form-control", type="date") }}
+                        </div>
+
+                        <div class="col-md-6">
+                            {{ form.telephone_tuteur.label(class="form-label") }}
+                            {{ form.telephone_tuteur(class="form-control", placeholder="77 XXX XX XX") }}
+                        </div>
+
+                        <div class="col-12">
+                            {{ form.nom_tuteur.label(class="form-label") }}
+                            {{ form.nom_tuteur(class="form-control") }}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-end gap-2">
+                        <a href="{{ url_for('talibes.lister') }}" class="btn btn-light">Annuler</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
