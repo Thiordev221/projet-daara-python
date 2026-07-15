@@ -68,6 +68,40 @@ def creer():
     return render_template('progressions/formulaire.html', form=form)
 
 
+@bp_progressions.route('/<int:id>/modifier', methods=['GET', 'POST'])
+def modifier(id):
+    progression = db.session.get(Progression, id)
+    if not progression:
+        raise ProgressionIntrouvableException(id)
+
+    form = ProgressionForm(obj=progression)
+    form.talibe_matricule.choices = [
+        (t.matricule, f"{t.prenom} {t.nom}") for t in Talibe.query.order_by(Talibe.nom).all()
+    ]
+
+    if form.validate_on_submit():
+        try:
+            if form.nombre_versets.data < 0:
+                raise ProgressionInvalideException("Le nombre de versets ne peut pas être négatif.")
+
+            progression.sourate = form.sourate.data
+            progression.nombre_versets = form.nombre_versets.data
+            progression.date_evaluation = form.date_evaluation.data
+            progression.observations = form.observations.data
+            progression.talibe_matricule = form.talibe_matricule.data
+
+            db.session.commit()
+            flash('Évaluation de progression mise à jour.', 'success')
+            return redirect(url_for('progressions.lister'))
+
+        except DaaraException as e:
+            db.session.rollback()
+            flash(str(e), 'danger')
+            return render_template('progressions/formulaire_modifier.html', form=form, progression=progression), 400
+
+    return render_template('progressions/formulaire_modifier.html', form=form, progression=progression)
+
+
 @bp_progressions.route('/<int:id>/supprimer', methods=['POST'])
 def supprimer(id):
     try:
@@ -84,3 +118,59 @@ def supprimer(id):
         flash(str(e), 'danger')
 
     return redirect(url_for('progressions.lister'))
+
+
+import csv
+from io import StringIO
+from flask import Response
+from app.models.progression import Progression  # Assurez-vous d'importer votre modèle
+
+
+# ... (vos autres imports et routes) ...
+
+@bp_progressions.route('/exporter')
+def exporter_csv():
+    # 1. Récupérer l'historique des progressions par date décroissante
+    progressions = Progression.query.order_by(Progression.date_evaluation.desc()).all()
+
+    # 2. Créer le flux mémoire
+    flux = StringIO()
+    flux.write('\ufeff')  # BOM UTF-8 pour Excel
+
+    writer = csv.writer(flux, delimiter=';')
+
+    # 3. En-tête du fichier CSV
+    writer.writerow([
+        'Date Évaluation',
+        'Matricule Talibé',
+        'Talibé',
+        'Sourate',
+        'Nombre de Versets',
+        'Observations / Remarques'
+    ])
+
+    # 4. Écriture des lignes
+    for p in progressions:
+        date_eval = p.date_evaluation.strftime('%d/%m/%Y') if p.date_evaluation else 'Non renseignée'
+        nom_talibe = f"{p.talibe.prenom} {p.talibe.nom}" if p.talibe else "Inconnu"
+
+        writer.writerow([
+            date_eval,
+            p.talibe_matricule,
+            nom_talibe,
+            p.sourate,
+            p.nombre_versets,
+            p.observations or ''
+        ])
+
+    reponse_contenu = flux.getvalue()
+    flux.close()
+
+    return Response(
+        reponse_contenu,
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=export_progressions.csv",
+            "Cache-Control": "no-cache"
+        }
+    )   

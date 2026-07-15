@@ -4,8 +4,16 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Suivi des Progressions (Mémorisation)</h2>
-    <a href="{{ url_for('progressions.creer') }}" class="btn btn-primary">+ Enregistrer une Évaluation</a>
+    <h2>Gestion des progressions</h2>
+    <div>
+        <!-- Nouveau bouton d'export CSV -->
+        <a href="{{ url_for('progressions.exporter_csv') }}" class="btn btn-success me-2">
+            Exporter en CSV
+        </a>
+        <a href="{{ url_for('progressions.creer') }}" class="btn btn-primary">
+            + Ajouter une progression
+        </a>
+    </div>
 </div>
 
 <!-- Filtrage rapide par Talibé -->
@@ -59,10 +67,16 @@
                     {% endif %}
                 </td>
                 <td class="text-center">
-                    <!-- Formulaire de suppression -->
-                    <form action="{{ url_for('progressions.supprimer', id=progression.id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette évaluation ?');" style="display:inline;">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
-                    </form>
+                    <div class="d-flex justify-content-center gap-2">
+                        <!-- Bouton Modifier (Édition) -->
+                        <a href="{{ url_for('progressions.modifier', id=progression.id) }}" class="btn btn-sm btn-outline-warning">
+                            Modifier
+                        </a>
+                        <!-- Formulaire de suppression -->
+                        <form action="{{ url_for('progressions.supprimer', id=progression.id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer cette évaluation ?');" class="m-0">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% else %}

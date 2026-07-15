@@ -1,23 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Nouvelle Classe{% endblock %}
+{% block title %}Modifier la Classe{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Ajouter une nouvelle Classe</h4>
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Modifier la Classe</h4>
             </div>
             <div class="card-body p-4">
                 <form method="POST" novalidate>
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
-                        {{ form.code.label(class="form-label") }}
-                        {{ form.code(class="form-control", placeholder="Ex: CL-001") }}
-                        {% if form.code.errors %}
-                            <div class="text-danger small">{% for error in form.code.errors %}{{ error }}{% endfor %}</div>
-                        {% endif %}
+                        {{ form.code.label(class="form-label text-muted") }}
+                        {{ form.code(class="form-control bg-light", readonly=True) }}
                     </div>
                     <div class="mb-3">
                         {{ form.libelle.label(class="form-label") }}
@@ -33,7 +30,7 @@
                     </div>
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url_for('classes.lister') }}" class="btn btn-light">Annuler</a>
-                        {{ form.submit(class="btn btn-primary", value="Créer la classe") }}
+                        {{ form.submit(class="btn btn-warning", value="Mettre à jour") }}
                     </div>
                 </form>
             </div>

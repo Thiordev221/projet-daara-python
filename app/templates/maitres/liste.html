@@ -4,8 +4,16 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Gestion des Maîtres (Oustaz)</h2>
-    <a href="{{ url_for('maitres.creer') }}" class="btn btn-primary">+ Ajouter un Maître</a>
+    <h2>Liste des Maitres</h2>
+    <div>
+        <!-- Nouveau bouton d'export CSV -->
+        <a href="{{ url_for('maitres.exporter_csv') }}" class="btn btn-success me-2">
+            Exporter en CSV
+        </a>
+        <a href="{{ url_for('maitres.creer') }}" class="btn btn-primary">
+            + Ajouter un maître
+        </a>
+    </div>
 </div>
 
 <!-- Barre de recherche -->
@@ -49,11 +57,17 @@
                         <span class="text-muted small">Aucune classe assignée</span>
                     {% endif %}
                 </td>
-                <td class="text-center">
-                    <!-- Formulaire de suppression sécurisé par POST -->
-                    <form action="{{ url_for('maitres.supprimer', matricule=maitre.matricule) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce maître ?');" style="display:inline;">
-                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
-                    </form>
+               <td class="text-center">
+                    <div class="d-flex justify-content-center gap-2">
+                        <!-- Bouton Modifier (Édition) -->
+                        <a href="{{ url_for('maitres.modifier', matricule=maitre.matricule) }}" class="btn btn-sm btn-warning">
+                            Modifier
+                        </a>
+                        <!-- Formulaire de suppression -->
+                        <form action="{{ url_for('maitres.supprimer', matricule=maitre.matricule) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce maître ?');" class="m-0">
+                            <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% else %}

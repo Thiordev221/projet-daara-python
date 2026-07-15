@@ -1,24 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}Nouvel Inscription{% endblock %}
+{% block title %}Modifier le Talibé{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Inscrire un nouveau Talibé</h4>
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Modifier la fiche du Talibé</h4>
             </div>
             <div class="card-body p-4">
                 <form method="POST" novalidate>
                     {{ form.hidden_tag() }}
                     <div class="row g-3">
                         <div class="col-md-6">
-                            {{ form.matricule.label(class="form-label") }}
-                            {{ form.matricule(class="form-control", placeholder="Ex: T-2026-001") }}
-                            {% if form.matricule.errors %}
-                                <div class="text-danger small">{% for error in form.matricule.errors %}{{ error }}{% endfor %}</div>
-                            {% endif %}
+                            {{ form.matricule.label(class="form-label text-muted") }}
+                            {{ form.matricule(class="form-control bg-light", readonly=True) }}
                         </div>
                         <div class="col-md-6">
                             {{ form.classe_code.label(class="form-label") }}
@@ -47,7 +44,7 @@
                     </div>
                     <div class="mt-4 d-flex justify-content-end gap-2">
                         <a href="{{ url_for('talibes.lister') }}" class="btn btn-light">Annuler</a>
-                        {{ form.submit(class="btn btn-primary", value="Inscrire") }}
+                        {{ form.submit(class="btn btn-warning", value="Mettre à jour") }}
                     </div>
                 </form>
             </div>

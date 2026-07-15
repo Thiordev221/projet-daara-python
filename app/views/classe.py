@@ -64,6 +64,37 @@ def creer():
     return render_template('classes/formulaire.html', form=form, classe=None)
 
 
+@bp_classes.route('/<code>/modifier', methods=['GET', 'POST'])
+def modifier(code):
+    classe = db.session.get(Classe, code)
+    if not classe:
+        raise ClasseIntrouvableException(code)
+
+    form = ClasseForm(obj=classe)
+    form.maitre_matricule.choices = [
+        (m.matricule, f"{m.prenom} {m.nom}") for m in Maitre.query.order_by(Maitre.nom).all()
+    ]
+
+    if request.method == 'GET':
+        form.code.data = classe.code
+
+    if form.validate_on_submit():
+        try:
+            classe.libelle = form.libelle.data
+            classe.niveau = form.niveau.data
+            classe.maitre_matricule = form.maitre_matricule.data
+
+            db.session.commit()
+            flash('Classe mise à jour avec succès.', 'success')
+            return redirect(url_for('classes.lister'))
+
+        except DaaraException as e:
+            db.session.rollback()
+            flash(str(e), 'danger')
+            return render_template('classes/formulaire_modifier.html', form=form, classe=classe), 400
+
+    return render_template('classes/formulaire_modifier.html', form=form, classe=classe)
+
 @bp_classes.route('/<code>/supprimer', methods=['POST'])
 def supprimer(code):
     try:
@@ -89,3 +120,57 @@ def supprimer(code):
         flash(str(e), 'danger')
 
     return redirect(url_for('classes.lister'))
+
+
+import csv
+from io import StringIO
+from flask import Response
+from app.models.classe import Classe  # Assurez-vous d'importer votre modèle
+
+
+# ... (vos autres imports et routes) ...
+
+@bp_classes.route('/exporter')
+def exporter_csv():
+    # 1. Récupérer les classes
+    classes = Classe.query.order_by(Classe.libelle).all()
+
+    # 2. Créer le flux mémoire
+    flux = StringIO()
+    flux.write('\ufeff')  # BOM UTF-8 pour Excel
+
+    writer = csv.writer(flux, delimiter=';')
+
+    # 3. En-tête du fichier CSV
+    writer.writerow([
+        'Code Classe',
+        'Libellé',
+        'Niveau',
+        'Maître Responsable',
+        'Nombre de Talibés'
+    ])
+
+    # 4. Écriture des lignes
+    for c in classes:
+        nom_maitre = f"{c.maitre.prenom} {c.maitre.nom}" if c.maitre else "Aucun"
+        nb_talibes = len(c.talibes) if c.talibes else 0
+
+        writer.writerow([
+            c.code,
+            c.libelle,
+            c.niveau,
+            nom_maitre,
+            nb_talibes
+        ])
+
+    reponse_contenu = flux.getvalue()
+    flux.close()
+
+    return Response(
+        reponse_contenu,
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=export_classes.csv",
+            "Cache-Control": "no-cache"
+        }
+    )

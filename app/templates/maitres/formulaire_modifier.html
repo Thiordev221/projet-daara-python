@@ -1,23 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}Nouveau Maître{% endblock %}
+{% block title %}Modifier le Maître{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Ajouter un nouveau Maître</h4>
+            <div class="card-header bg-warning text-dark">
+                <h4 class="mb-0">Modifier la fiche du Maître</h4>
             </div>
             <div class="card-body p-4">
                 <form method="POST" novalidate>
                     {{ form.hidden_tag() }}
                     <div class="mb-3">
-                        {{ form.matricule.label(class="form-label") }}
-                        {{ form.matricule(class="form-control", placeholder="Ex: M-001") }}
-                        {% if form.matricule.errors %}
-                            <div class="text-danger small">{% for error in form.matricule.errors %}{{ error }}{% endfor %}</div>
-                        {% endif %}
+                        {{ form.matricule.label(class="form-label text-muted") }}
+                        {{ form.matricule(class="form-control bg-light", readonly=True) }}
                     </div>
                     <div class="mb-3">
                         {{ form.prenom.label(class="form-label") }}
@@ -33,7 +30,7 @@
                     </div>
                     <div class="d-flex justify-content-end gap-2">
                         <a href="{{ url_for('maitres.lister') }}" class="btn btn-light">Annuler</a>
-                        {{ form.submit(class="btn btn-primary", value="Enregistrer") }}
+                        {{ form.submit(class="btn btn-warning", value="Mettre à jour") }}
                     </div>
                 </form>
             </div>
