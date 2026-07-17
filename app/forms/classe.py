@@ -6,9 +6,9 @@ from wtforms.validators import DataRequired, Length
 
 # --- FORMULAIRE CLASSE ---
 class ClasseForm(FlaskForm):
-    code = StringField('Code Classe', validators=[DataRequired(), Length(max=50)])
-    libelle = StringField('Libellé', validators=[DataRequired(), Length(max=100)])
-    niveau = StringField('Niveau', validators=[DataRequired(), Length(max=50)])
+    code = StringField('Code Classe', validators=[DataRequired(message="Code obligatoire"), Length(max=50)])
+    libelle = StringField('Libellé', validators=[DataRequired(message="Libellé obligatoire"), Length(max=100)])
+    niveau = StringField('Niveau', validators=[DataRequired(message="Niveau obligatoire"), Length(max=50)])
 
     # Alimenté dynamiquement dans la vue depuis la table 'maitres'
     maitre_matricule = SelectField('Maître Responsable', validators=[DataRequired()])

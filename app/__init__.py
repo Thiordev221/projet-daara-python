@@ -5,6 +5,7 @@ from .models.maitre import Maitre
 from .models.progression import Progression
 from .models.talibe import Talibe
 from .views.classe import bp_classes
+from .views.main import bp_main
 from .views.maitre import bp_maitres
 from .views.progression import bp_progressions
 from .views.talibe import bp_talibes
@@ -21,6 +22,7 @@ def create_app(nom_config="dev"):
     app.config.from_object(
         f"config.{nom_config.capitalize()}Config")
 
+
     # 2) Initialiser les extensions
     # from .extensions import db, login_manager
     db.init_app(app)
@@ -32,4 +34,5 @@ def create_app(nom_config="dev"):
     app.register_blueprint(bp_progressions)
     app.register_blueprint(bp_maitres)
     app.register_blueprint(bp_classes)
+    app.register_blueprint(bp_main)
     return app
