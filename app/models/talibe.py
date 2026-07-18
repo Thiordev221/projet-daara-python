@@ -16,4 +16,4 @@ class Talibe(BaseModel):  # Hérite de BaseModel
 
     # Finir de compléter la classe avec la relation obligatoire
     classe_code = db.Column(db.String(50), db.ForeignKey('classes.code'), nullable=False)
-    progressions = db.relationship('Progression', backref='talibe', lazy=True)
+    progressions = db.relationship('Progression', backref='talibe', cascade='all, delete-orphan' , lazy=True)
